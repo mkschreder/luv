@@ -484,3 +484,7 @@ LUALIB_API int luaopen_luv (lua_State *L) {
 
   return 1;
 }
+
+LUALIB_API int luaopen_uv(lua_State *L){
+  return luaopen_luv(L); 
+}
