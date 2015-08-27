@@ -60,6 +60,7 @@ static int luv_thread_arg_set(lua_State*L, luv_thread_arg_t* args, int idx, int 
   {
     luv_val_t *arg = args->argv + i - idx;
     arg->type = lua_type(L, i);
+    
     switch (arg->type)
     {
     case LUA_TNIL:
@@ -70,15 +71,15 @@ static int luv_thread_arg_set(lua_State*L, luv_thread_arg_t* args, int idx, int 
     case LUA_TNUMBER:
       arg->val.num = lua_tonumber(L, i);
       break;
-    case LUA_TLIGHTUSERDATA:
+    case LUA_TUSERDATA:
       arg->val.point = lua_touserdata(L, i);
       break;
     case LUA_TSTRING:
       arg->val.str.base = lua_tolstring(L, i, &arg->val.str.len);
       break;
     default:
-      fprintf(stderr, "Error: thread arg not support type '%s' at %d",
-        luaL_typename(L, arg->type), i);
+      fprintf(stderr, "Error: thread arg does not support type '%s' at %d\n",
+        lua_typename(L, arg->type), i);
       exit(-1);
       break;
     }
@@ -105,9 +106,9 @@ int luv_thread_arg_push(lua_State*L, const luv_thread_arg_t* args) {
     case LUA_TBOOLEAN:
       lua_pushboolean(L, arg->val.boolean);
       break;
-    case LUA_TLIGHTUSERDATA:
-      lua_pushlightuserdata(L, arg->val.point);
-      break;
+    case LUA_TUSERDATA: 
+    	lua_pushuserdata(L, arg->val.point); 
+    	break; 
     case LUA_TNUMBER:
       lua_pushnumber(L, arg->val.num);
       break;
@@ -115,8 +116,8 @@ int luv_thread_arg_push(lua_State*L, const luv_thread_arg_t* args) {
       lua_pushlstring(L, arg->val.str.base, arg->val.str.len);
       break;
     default:
-      fprintf(stderr, "Error: thread arg not support type %s at %d",
-        luaL_typename(L, arg->type), i + 1);
+      fprintf(stderr, "Error: thread arg does not support type %s at %d\n",
+        lua_typename(L, arg->type), i + 1);
     }
     i++;
   };
@@ -163,7 +164,7 @@ static luv_thread_t* luv_check_thread(lua_State* L, int index)
 }
 
 static int luv_thread_gc(lua_State *L) {
-  luv_thread_t* tid = luv_check_thread(L, 1);
+	luv_thread_t* tid = luv_check_thread(L, 1);
   free(tid->code);
   tid->code = NULL;
   tid->len = 0;
