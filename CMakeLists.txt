@@ -12,6 +12,10 @@ option(BUILD_SHARED_LIBS "Build shared library" OFF)
 option(WITH_SHARED_LIBUV "Link to a shared libuv library instead of static linking" OFF)
 option(WITH_LUA_ENGINE "Lua engine" "Lua")
 
+set(WITH_LUA_ENGINE "Lua")
+set(LUA_BUILD_TYPE "System")
+set(WITH_SHARED_LIBUV ON)
+
 if (NOT WITH_LUA_ENGINE)
   set(WITH_LUA_ENGINE "LuaJIT"
     CACHE STRING "Link to LuaJIT or PUC Lua" FORCE)
