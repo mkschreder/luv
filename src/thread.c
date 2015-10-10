@@ -107,8 +107,10 @@ int luv_thread_arg_push(lua_State*L, const luv_thread_arg_t* args) {
       lua_pushboolean(L, arg->val.boolean);
       break;
     case LUA_TUSERDATA: 
-    	lua_pushuserdata(L, arg->val.point); 
-    	break; 
+		// TODO: what side effects does this have with regards to gc? OpenWRT lua seems to be missing pushuserdata..
+		//lua_pushuserdata(L, arg->val.point); 
+		lua_pushlightuserdata(L, arg->val.point); 
+		break; 
     case LUA_TNUMBER:
       lua_pushnumber(L, arg->val.num);
       break;
